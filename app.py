@@ -7,6 +7,9 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 from werkzeug.middleware.proxy_fix import ProxyFix
 
+port = int(os.environ.get("PORT", 5000))
+app.run(host="0.0.0.0", port=port)
+
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
@@ -45,6 +48,8 @@ def index():
     return render_template('dashboard.html', scans=recent_scans)
 
 @app.route('/scan', methods=['GET', 'POST'])
+
+
 def scan():
     """Initiate a new scan"""
     from models import Scan, Target

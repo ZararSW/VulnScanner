@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard - Bug Hunter{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="card-title">
+                    <i class="fas fa-bug me-2"></i>
+                    Bug Hunter
+                </h2>
+                <p class="card-text">
+                    Advanced Web Vulnerability Scanner with Bug Bounty Methodology
+                </p>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#scanModal">
+                    <i class="fas fa-search me-1"></i> Start New Scan
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h4 class="card-title">
+                    <i class="fas fa-shield-alt me-2"></i>
+                    Scan Capabilities
+                </h4>
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">Comprehensive Reconnaissance</li>
+                    <li class="list-group-item">OWASP Top 10 Vulnerability Detection</li>
+                    <li class="list-group-item">Multi-stage Validation</li>
+                    <li class="list-group-item">Proof-of-Concept Generation</li>
+                    <li class="list-group-item">False Positive Elimination</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">
+            <i class="fas fa-history me-2"></i>
+            Recent Scans
+        </h5>
+        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#scanModal">
+            <i class="fas fa-plus me-1"></i> New Scan
+        </button>
+    </div>
+    <div class="card-body">
+        {% if scans %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Scan Name</th>
+                            <th>Target</th>
+                            <th>Status</th>
+                            <th>Progress</th>
+                            <th>Issues</th>
+                            <th>Started</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for scan in scans %}
+                        <tr class="scan-row" data-scan-id="{{ scan.id }}">
+                            <td>{{ scan.name }}</td>
+                            <td>{{ scan.target.url }}</td>
+                            <td>
+                                <span class="status-badge badge 
+                                    {% if scan.status == 'completed' %}bg-success
+                                    {% elif scan.status == 'in_progress' %}bg-info
+                                    {% elif scan.status == 'failed' %}bg-danger
+                                    {% else %}bg-secondary{% endif %}">
+                                    {{ scan.status }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if scan.status == 'in_progress' %}
+                                <div class="progress">
+                                    <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                        role="progressbar" 
+                                        style="width: {{ scan.progress }}%" 
+                                        aria-valuenow="{{ scan.progress }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                        {{ scan.progress }}%
+                                    </div>
+                                </div>
+                                {% elif scan.status == 'completed' %}
+                                <div class="progress">
+                                    <div class="progress-bar bg-success" 
+                                        role="progressbar" 
+                                        style="width: 100%" 
+                                        aria-valuenow="100" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                        100%
+                                    </div>
+                                </div>
+                                {% else %}
+                                <div class="progress">
+                                    <div class="progress-bar" 
+                                        role="progressbar" 
+                                        style="width: {{ scan.progress }}%" 
+                                        aria-valuenow="{{ scan.progress }}" 
+                                        aria-valuemin="0" 
+                                        aria-valuemax="100">
+                                        {{ scan.progress }}%
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if scan.vulnerabilities_count > 0 %}
+                                <span class="badge bg-danger">{{ scan.vulnerabilities_count }}</span>
+                                {% else %}
+                                <span class="badge bg-secondary">0</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ scan.started_at.strftime('%Y-%m-%d %H:%M') if scan.started_at else 'Pending' }}</td>
+                            <td>
+                                <a href="{{ url_for('scan_results', scan_id=scan.id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                No scans have been run yet. Start your first scan now!
+            </div>
+            <div class="text-center">
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#scanModal">
+                    <i class="fas fa-search me-1"></i> Start New Scan
+                </button>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Vulnerability Types
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-code text-danger me-2"></i>
+                            Cross-Site Scripting (XSS)
+                        </div>
+                        <span class="badge bg-danger rounded-pill">Critical</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-database text-danger me-2"></i>
+                            SQL Injection
+                        </div>
+                        <span class="badge bg-danger rounded-pill">Critical</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-exchange-alt text-warning me-2"></i>
+                            Cross-Site Request Forgery (CSRF)
+                        </div>
+                        <span class="badge bg-warning rounded-pill">Medium</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-random text-warning me-2"></i>
+                            Open Redirect
+                        </div>
+                        <span class="badge bg-warning rounded-pill">Medium</span>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-info-circle text-info me-2"></i>
+                            Information Disclosure
+                        </div>
+                        <span class="badge bg-info rounded-pill">Low-Medium</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card shadow-sm mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">
+                    <i class="fas fa-search me-2"></i>
+                    Reconnaissance Capabilities
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="list-group">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-sitemap me-2"></i>
+                            Subdomain Discovery
+                        </div>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-network-wired me-2"></i>
+                            Port Scanning
+                        </div>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-spider me-2"></i>
+                            Web Crawling
+                        </div>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-laptop-code me-2"></i>
+                            Technology Detection
+                        </div>
+                    </div>
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <i class="fas fa-envelope me-2"></i>
+                            Email Harvesting
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Update scan status for in-progress scans
+    document.addEventListener('DOMContentLoaded', function() {
+        function updateScanStatus() {
+            const inProgressRows = document.querySelectorAll('tr.scan-row');
+            
+            inProgressRows.forEach(function(row) {
+                const scanId = row.getAttribute('data-scan-id');
+                const statusBadge = row.querySelector('.status-badge');
+                const progressBar = row.querySelector('.progress-bar');
+                
+                if (statusBadge && statusBadge.textContent.trim() === 'in_progress') {
+                    fetch(`/api/scan_status/${scanId}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // Update status badge
+                            if (data.status === 'completed') {
+                                statusBadge.textContent = 'completed';
+                                statusBadge.classList.remove('bg-info');
+                                statusBadge.classList.add('bg-success');
+                            } else if (data.status === 'failed') {
+                                statusBadge.textContent = 'failed';
+                                statusBadge.classList.remove('bg-info');
+                                statusBadge.classList.add('bg-danger');
+                            }
+                            
+                            // Update progress bar
+                            if (progressBar) {
+                                progressBar.style.width = `${data.progress}%`;
+                                progressBar.setAttribute('aria-valuenow', data.progress);
+                                progressBar.textContent = `${data.progress}%`;
+                                
+                                if (data.status === 'completed') {
+                                    progressBar.classList.remove('progress-bar-striped', 'progress-bar-animated');
+                                    progressBar.classList.add('bg-success');
+                                }
+                            }
+                            
+                            // Update vulnerabilities count
+                            const vulnCountBadge = row.querySelector('td:nth-child(5) .badge');
+                            if (vulnCountBadge && data.vulnerabilities_found > 0) {
+                                vulnCountBadge.textContent = data.vulnerabilities_found;
+                                vulnCountBadge.classList.remove('bg-secondary');
+                                vulnCountBadge.classList.add('bg-danger');
+                            }
+                        })
+                        .catch(error => console.error('Error updating scan status:', error));
+                }
+            });
+        }
+        
+        // Initial update
+        updateScanStatus();
+        
+        // Periodic updates every 5 seconds
+        setInterval(updateScanStatus, 5000);
+    });
+</script>
+{% endblock %}

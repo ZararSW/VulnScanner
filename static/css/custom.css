@@ -1,0 +1,149 @@
+/* Custom styles for Bug Hunter Vulnerability Scanner */
+
+/* Global styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.footer {
+    margin-top: auto;
+}
+
+/* Card styling */
+.card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    font-weight: bold;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Badge styling */
+.badge {
+    font-weight: 500;
+    padding: 0.5em 0.8em;
+}
+
+/* Progress bar styling */
+.progress {
+    height: 1.2rem;
+    border-radius: 0.6rem;
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar {
+    font-weight: bold;
+    font-size: 0.8rem;
+}
+
+/* Table styling */
+.table th {
+    font-weight: 600;
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+}
+
+/* Code and pre styling */
+pre.poc-code, pre.evidence-code {
+    background-color: #1a1a1a;
+    padding: 1rem;
+    border-radius: 4px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.9rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+/* Vulnerability summary styles */
+.vulnerability-summary {
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Navbar custom styling */
+.navbar-brand {
+    font-weight: bold;
+    font-size: 1.4rem;
+}
+
+/* Status badge styles */
+.status-badge {
+    font-size: 0.85rem;
+    padding: 0.5em 0.8em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Truncate long URLs */
+.text-truncate {
+    max-width: 250px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Error pages */
+.error-container {
+    padding: 3rem 0;
+}
+
+/* Breadcrumb styling */
+.breadcrumb {
+    background-color: rgba(0, 0, 0, 0.1);
+    padding: 0.8rem 1.2rem;
+    border-radius: 6px;
+    margin-bottom: 1.5rem;
+}
+
+/* Accordion styling */
+.accordion-button:not(.collapsed) {
+    background-color: rgba(0, 0, 0, 0.2);
+    color: #fff;
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+}
+
+/* Animation for scan status badges */
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.6; }
+    100% { opacity: 1; }
+}
+
+.bg-info.status-badge {
+    animation: pulse 1.5s infinite;
+}
+
+/* Modal styling */
+.modal-content {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
